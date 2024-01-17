@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](https://semver.org), except that â
 
 Do not manually edit this file. It will be automatically updated when a new release is published.
 
+## 0.28.5
+_17 January 2024_
+
+* Publish to https://pkgs.dev.azure.com/msazure/One/_packaging/MediaProvenance-VerificationSite-Feed/Cargo/index/
+
 ## 0.28.4
 _04 December 2023_
 
