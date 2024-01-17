@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        token: ${{ secrets.GH_ADMIN_COMMIT_TOKEN }}
+        # token: ${{ secrets.GH_ADMIN_COMMIT_TOKEN }}
 
     - name: Get latest existing tag
       uses: WyriHaximus/github-action-get-previous-tag@v1
@@ -103,6 +103,6 @@ jobs:
 
     - name: Publish crate
       run: |
-        cargo publish --token $CRATES_IO_SECRET -p c2pa
-      env:
-        CRATES_IO_SECRET: ${{ secrets.CRATES_IO_SECRET }}
+        cargo publish --token "${{ secrets.CRATES_IO_SECRET }}" -p c2pa --index sparse+https://pkgs.dev.azure.com/msazure/One/_packaging/MediaProvenance-VerificationSite-Feed/Cargo/index/
+      # env:
+      #   CRATES_IO_SECRET: ${{ secrets.CRATES_IO_SECRET }}
