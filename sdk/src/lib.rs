@@ -82,6 +82,7 @@
 //! # }
 //! ```
 
+pub use asn1::rfc3161::{MessageImprint, TimeStampReq};
 pub use assertion::{Assertion, AssertionBase, AssertionCbor, AssertionJson};
 pub mod assertions;
 
