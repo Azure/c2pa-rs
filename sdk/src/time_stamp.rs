@@ -408,16 +408,12 @@ impl Default for TstContainer {
 
 /// Wrap rfc3161 TimeStampRsp in COSE sigTst object
 pub fn make_cose_timestamp(ts_data: &[u8]) -> TstContainer {
-    if cfg!(feature = "openssl_sign") {
-        let token = TstToken {
-            val: ts_data.to_vec(),
-        };
+    let token = TstToken {
+        val: ts_data.to_vec(),
+    };
 
-        let mut container = TstContainer::new();
-        container.add_token(token);
+    let mut container = TstContainer::new();
+    container.add_token(token);
 
-        container
-    } else {
-        TstContainer::new()
-    }
+    container
 }
