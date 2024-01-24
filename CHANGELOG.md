@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org), except that â
 
 Do not manually edit this file. It will be automatically updated when a new release is published.
 
+## 0.28.6
+_24 January 2024_
+
+* Merge pull request #6 from Azure/duggaraju/authoring
+* Merge branch 'main' into duggaraju/authoring
+* Expose authoring support in WASM Expose async version of 'embed_from_memory' which can be called from wasm. Add unit test for the same
+* Disable upload code coverage
+
 ## 0.28.5
 _17 January 2024_
 
