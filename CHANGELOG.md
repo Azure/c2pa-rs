@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org), except that â
 
 Do not manually edit this file. It will be automatically updated when a new release is published.
 
+## 0.28.7
+_25 January 2024_
+
+* Merge pull request #8 from Azure/yuboxie/merge
+* Checkout with token
+* Merge remote-tracking branch 'official/main'
+* adds read_cai test for PDF with content credentials ([#366](https://github.com/contentauth/c2pa-rs/pull/366))
+
 ## 0.28.6
 _24 January 2024_
 
