@@ -1856,7 +1856,45 @@ pub(crate) mod tests {
         //println!("{manifest_store}");main
     }
 
-    #[cfg(any(target_arch = "wasm32", feature = "openssl_sign"))]
+    #[test]
+    fn test_embed_from_memory_bmff() {
+        use crate::assertions::User;
+        let video = include_bytes!("../tests/fixtures/video1.mp4");
+        // convert buffer to cursor with Read/Write/Seek capability
+        let mut stream = std::io::Cursor::new(video.to_vec());
+        // let mut image = image.to_vec();
+        // let mut stream = std::io::Cursor::new(image.as_mut_slice());
+
+        let mut manifest = Manifest::new("my_app".to_owned());
+        manifest.set_title("EmbedStream");
+        manifest
+            .add_assertion(&User::new(
+                "org.contentauth.mylabel",
+                r#"{"my_tag":"Anything I want"}"#,
+            ))
+            .unwrap();
+
+        let source_ingredient = Ingredient::from_memory("mp4", video).unwrap();
+        if source_ingredient.manifest_data().is_some() {
+            manifest.set_parent(source_ingredient).unwrap();
+        }
+
+        let signer = temp_signer();
+        let mut output = Cursor::new(Vec::new());
+        // Embed a manifest using the signer.
+        manifest
+            .embed_to_stream("mp4", &mut stream, &mut output, signer.as_ref())
+            .expect("embed_stream");
+
+        let bytes = output.into_inner();
+        let manifest_store =
+            crate::ManifestStore::from_bytes("mp4", &bytes, true).expect("from_bytes");
+        assert_eq!(
+            manifest_store.get_active().unwrap().title().unwrap(),
+            "EmbedStream"
+        );
+    }
+
     #[cfg_attr(feature = "openssl_sign", actix::test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test)]
     async fn test_embed_from_memory_async() {
@@ -1864,8 +1902,6 @@ pub(crate) mod tests {
         let image = include_bytes!("../tests/fixtures/earth_apollo17.jpg");
         // convert buffer to cursor with Read/Write/Seek capability
         let mut stream = std::io::Cursor::new(image.to_vec());
-        // let mut image = image.to_vec();
-        // let mut stream = std::io::Cursor::new(image.as_mut_slice());
 
         let mut manifest = Manifest::new("my_app".to_owned());
         manifest.set_title("EmbedStream");
@@ -1892,7 +1928,6 @@ pub(crate) mod tests {
         );
         #[cfg(feature = "add_thumbnails")]
         assert!(manifest_store.get_active().unwrap().thumbnail().is_some());
-        //println!("{manifest_store}");main
     }
 
     #[cfg(feature = "file_io")]

@@ -332,6 +332,11 @@ impl BmffHash {
         Ok(())
     }
 
+    pub fn gen_hash_from_stream(&mut self, reader: &mut dyn CAIRead) -> crate::error::Result<()> {
+        self.hash = Some(ByteBuf::from(self.hash_from_stream(reader)?));
+        Ok(())
+    }
+
     /// Generate the hash again.
     pub fn regen_hash(&mut self) -> crate::error::Result<()> {
         let p = self.path.clone();
@@ -361,6 +366,33 @@ impl BmffHash {
             bmff_to_jumbf_exclusions(&mut data, bmff_exclusions, self.bmff_version > 1)?;
 
         let hash = hash_asset_by_alg(&alg, asset_path, Some(exclusions))?;
+
+        if hash.is_empty() {
+            Err(Error::BadParam("could not generate data hash".to_string()))
+        } else {
+            Ok(hash)
+        }
+    }
+
+    fn hash_from_stream(&mut self, reader: &mut dyn CAIRead) -> crate::error::Result<Vec<u8>> {
+        if self.is_remote_hash() {
+            return Err(Error::BadParam(
+                "asset hash is remote, not yet supported".to_owned(),
+            ));
+        }
+
+        let alg = match self.alg {
+            Some(ref a) => a.clone(),
+            None => "sha256".to_string(),
+        };
+
+        let bmff_exclusions = &self.exclusions;
+
+        // convert BMFF exclusion map to flat exclusion list
+        let exclusions = bmff_to_jumbf_exclusions(reader, bmff_exclusions, self.bmff_version > 1)?;
+
+        reader.rewind()?;
+        let hash = hash_stream_by_alg(&alg, reader, Some(exclusions), true)?;
 
         if hash.is_empty() {
             Err(Error::BadParam("could not generate data hash".to_string()))

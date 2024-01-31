@@ -112,6 +112,9 @@ impl Seek for CAIReadWriteWrapper<'_> {
     }
 }
 
+impl CAIRead for CAIReadWriteWrapper<'_> {}
+impl CAIReadWrite for CAIReadWriteWrapper<'_> {}
+
 /// CAIReader trait to insure CAILoader method support both Read & Seek
 // Interface for in memory CAI reading
 pub trait CAIReader: Sync + Send {
